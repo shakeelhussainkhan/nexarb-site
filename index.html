@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NexArb — Next Agentic Arbitrage for the modern seller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #0D1B2A;
+    --navy2:  #0A1520;
+    --navy3:  #1A2E42;
+    --gold:   #B8922A;
+    --gold2:  #C9A84C;
+    --gold3:  #E8C96A;
+    --cream:  #F0E6D3;
+    --steel:  #4A6070;
+    --white:  #FFFFFF;
+    --off:    #F5F5F7;
+    --off2:   #FAFAFA;
+    --text:   #1D1D1F;
+    --text2:  #3D3D3F;
+    --text3:  #6E6E73;
+    --border: #D2D2D7;
+    --border2:#E8E8ED;
+    --r:      12px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--white);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAV ─────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 60px; height: 60px;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 0.5px solid var(--border2);
+  }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+
+  .nav-seal { width: 32px; height: 32px; }
+
+  .nav-wordmark {
+    font-size: 20px; font-weight: 800; letter-spacing: -0.8px;
+  }
+  .nav-wordmark .nx  { color: var(--navy); }
+  .nav-wordmark .arb { color: var(--gold); font-weight: 300; }
+
+  .nav-links {
+    display: flex; gap: 32px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 13px; font-weight: 400;
+    color: var(--text3); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta { display: flex; align-items: center; gap: 10px; }
+
+  .btn-ghost {
+    font-size: 13px; font-weight: 400; color: var(--text3);
+    background: none; border: none; cursor: pointer;
+    padding: 8px 14px; text-decoration: none;
+    transition: color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--text); }
+
+  .btn-primary {
+    font-size: 13px; font-weight: 600;
+    color: var(--white); background: var(--navy);
+    border: none; border-radius: 100px;
+    padding: 9px 20px; cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: #162436; transform: translateY(-1px); }
+
+  /* ── HERO ────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 120px 60px 80px;
+    text-align: center;
+    background: var(--white);
+    position: relative; overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -100px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 500px;
+    background: radial-gradient(ellipse at center top,
+      rgba(184,146,42,0.08) 0%,
+      rgba(184,146,42,0.03) 40%,
+      transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(184,146,42,0.08);
+    border: 0.5px solid rgba(184,146,42,0.3);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 11px; font-weight: 600;
+    color: var(--gold); letter-spacing: 1.5px;
+    margin-bottom: 36px;
+    position: relative; z-index: 1;
+    text-transform: uppercase;
+  }
+  .hero-badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; } 50% { opacity:0.4; }
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 7vw, 92px);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -2.5px;
+    color: var(--navy);
+    max-width: 860px;
+    position: relative; z-index: 1;
+    margin-bottom: 8px;
+  }
+  .hero-title .gold { color: var(--gold); font-style: italic; }
+
+  .hero-sub {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(16px, 2vw, 22px);
+    font-weight: 400; font-style: italic;
+    color: var(--text3);
+    margin-bottom: 36px;
+    position: relative; z-index: 1;
+  }
+
+  .hero-tagline {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-style: italic;
+    color: var(--text3);
+    margin-bottom: 48px;
+    position: relative; z-index: 1;
+  }
+  .hero-tagline .hl {
+    color: var(--gold); font-weight: 700; font-style: normal;
+  }
+
+  .hero-actions {
+    display: flex; gap: 14px; align-items: center;
+    position: relative; z-index: 1;
+    margin-bottom: 72px;
+  }
+
+  .btn-hero {
+    font-size: 15px; font-weight: 600;
+    color: var(--white); background: var(--navy);
+    border: none; border-radius: 100px;
+    padding: 16px 36px; cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: -0.2px;
+  }
+  .btn-hero:hover { background: #162436; transform: translateY(-2px); }
+
+  .btn-outline {
+    font-size: 15px; font-weight: 500;
+    color: var(--navy);
+    border: 0.5px solid var(--border);
+    border-radius: 100px;
+    padding: 16px 36px; cursor: pointer;
+    text-decoration: none; background: none;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--navy); transform: translateY(-2px); }
+
+  /* stat strip */
+  .hero-stats {
+    display: flex; gap: 0; align-items: stretch;
+    position: relative; z-index: 1;
+    border: 0.5px solid var(--border2);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--off);
+  }
+  .stat {
+    padding: 24px 40px; text-align: center;
+    border-right: 0.5px solid var(--border2);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 700;
+    color: var(--navy); display: block;
+    letter-spacing: -1px;
+  }
+  .stat-label {
+    font-size: 11px; font-weight: 400;
+    color: var(--text3); letter-spacing: 0.5px;
+    margin-top: 4px; display: block;
+  }
+
+  /* ── LOGO BAR ────────────────────────────────── */
+  .logo-bar {
+    padding: 40px 60px;
+    background: var(--off);
+    border-top: 0.5px solid var(--border2);
+    border-bottom: 0.5px solid var(--border2);
+    text-align: center;
+  }
+  .logo-bar-label {
+    font-size: 11px; font-weight: 500;
+    color: var(--text3); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 24px;
+  }
+  .logo-bar-row {
+    display: flex; gap: 48px;
+    align-items: center; justify-content: center;
+    flex-wrap: wrap;
+  }
+  .logo-bar-item {
+    font-size: 15px; font-weight: 700;
+    color: var(--border); letter-spacing: -0.3px;
+  }
+
+  /* ── SECTION COMMONS ─────────────────────────── */
+  .section-eye {
+    font-size: 10px; font-weight: 600;
+    color: var(--gold); letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 16px;
+    display: block;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 700; color: var(--navy);
+    letter-spacing: -1.5px; line-height: 1.08;
+    margin-bottom: 16px;
+  }
+  .section-sub {
+    font-size: 17px; color: var(--text3);
+    max-width: 520px; line-height: 1.65;
+    margin-bottom: 64px;
+  }
+
+  /* ── PIPELINE ────────────────────────────────── */
+  .pipeline {
+    padding: 120px 60px;
+    background: var(--white);
+  }
+
+  .flow {
+    display: flex; align-items: flex-start;
+    justify-content: center; gap: 0;
+    flex-wrap: wrap;
+  }
+  .flow-node {
+    display: flex; flex-direction: column;
+    align-items: center; width: 150px;
+  }
+  .flow-icon {
+    width: 68px; height: 68px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin-bottom: 14px;
+    background: var(--off);
+    border: 0.5px solid var(--border2);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .flow-icon:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(184,146,42,0.08);
+  }
+  .flow-label {
+    font-size: 13px; font-weight: 600;
+    color: var(--navy); margin-bottom: 6px; text-align: center;
+  }
+  .flow-desc {
+    font-size: 11px; color: var(--text3);
+    text-align: center; line-height: 1.5;
+  }
+  .flow-arrow {
+    display: flex; align-items: center;
+    padding-top: 26px; width: 40px;
+    justify-content: center; flex-shrink: 0;
+    color: var(--border); font-size: 16px;
+  }
+
+  /* ── BENTO FEATURES ─────────────────────────── */
+  .features {
+    padding: 120px 60px;
+    background: var(--off);
+    border-top: 0.5px solid var(--border2);
+  }
+
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 14px;
+    max-width: 1100px; margin: 0 auto;
+  }
+
+  .bento-card {
+    background: var(--white);
+    border: 0.5px solid var(--border2);
+    border-radius: 16px;
+    padding: 36px;
+    position: relative; overflow: hidden;
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  .bento-card:hover {
+    box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+    border-color: var(--border);
+  }
+
+  .bc-1 { grid-column: span 7; }
+  .bc-2 { grid-column: span 5; }
+  .bc-3 { grid-column: span 4; }
+  .bc-4 { grid-column: span 4; }
+  .bc-5 { grid-column: span 4; }
+  .bc-6 { grid-column: span 12; background: var(--navy); }
+
+  .bento-icon { font-size: 28px; margin-bottom: 18px; display: block; }
+  .bento-tag {
+    display: inline-block;
+    font-size: 9px; font-weight: 600;
+    color: var(--gold); letter-spacing: 2px;
+    text-transform: uppercase;
+    background: rgba(184,146,42,0.08);
+    border: 0.5px solid rgba(184,146,42,0.2);
+    border-radius: 100px; padding: 4px 12px;
+    margin-bottom: 14px;
+  }
+  .bento-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 21px; font-weight: 700;
+    color: var(--navy); margin-bottom: 10px;
+    letter-spacing: -0.3px; line-height: 1.25;
+  }
+  .bc-6 .bento-title { color: var(--cream); }
+  .bento-body {
+    font-size: 14px; color: var(--text3); line-height: 1.7;
+  }
+  .bc-6 .bento-body { color: rgba(240,230,211,0.7); }
+
+  .channel-chips {
+    display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap;
+  }
+  .chip {
+    font-size: 11px; font-weight: 600;
+    padding: 5px 14px; border-radius: 100px;
+  }
+  .chip-amz { background: rgba(255,153,0,0.08); color: #C67F00; border: 0.5px solid rgba(255,153,0,0.25); }
+  .chip-wmt { background: rgba(0,113,206,0.08); color: #0068B8; border: 0.5px solid rgba(0,113,206,0.25); }
+  .chip-ali { background: rgba(255,106,0,0.08); color: #D4510A; border: 0.5px solid rgba(255,106,0,0.25); }
+
+  /* ── STEPS ──────────────────────────────────── */
+  .how {
+    padding: 120px 60px;
+    background: var(--white);
+  }
+
+  .steps {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; max-width: 1100px; margin: 0 auto;
+    border: 0.5px solid var(--border2);
+    border-radius: 16px; overflow: hidden;
+  }
+  .step {
+    padding: 48px 36px;
+    background: var(--white);
+    border-right: 0.5px solid var(--border2);
+    transition: background 0.3s;
+  }
+  .step:last-child { border-right: none; }
+  .step:hover { background: var(--off); }
+
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px; font-weight: 700;
+    color: rgba(184,146,42,0.15);
+    line-height: 1; margin-bottom: 20px;
+    display: block; letter-spacing: -3px;
+  }
+  .step-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold); margin-bottom: 18px;
+  }
+  .step-title {
+    font-size: 15px; font-weight: 700;
+    color: var(--navy); margin-bottom: 10px;
+  }
+  .step-body {
+    font-size: 13px; color: var(--text3); line-height: 1.65;
+  }
+
+  /* ── PRICING ─────────────────────────────────── */
+  .pricing {
+    padding: 120px 60px;
+    background: var(--off);
+    border-top: 0.5px solid var(--border2);
+    text-align: center;
+  }
+
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 14px; max-width: 960px; margin: 0 auto;
+    text-align: left;
+  }
+
+  .price-card {
+    background: var(--white);
+    border: 0.5px solid var(--border2);
+    border-radius: 16px; padding: 44px 36px;
+    position: relative;
+    transition: box-shadow 0.3s;
+  }
+  .price-card:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.07); }
+  .price-card.featured {
+    border-color: var(--navy);
+    border-width: 1px;
+  }
+
+  .price-badge {
+    position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+    background: var(--navy); color: var(--white);
+    font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    padding: 5px 16px; border-radius: 100px; white-space: nowrap;
+  }
+
+  .price-tier {
+    font-size: 9px; font-weight: 600;
+    color: var(--gold); letter-spacing: 3px;
+    margin-bottom: 12px; display: block;
+    text-transform: uppercase;
+  }
+  .price-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 700;
+    color: var(--navy); margin-bottom: 8px;
+  }
+  .price-desc {
+    font-size: 13px; color: var(--text3);
+    margin-bottom: 28px; line-height: 1.6;
+  }
+  .price-amount {
+    display: flex; align-items: baseline; gap: 3px;
+    margin-bottom: 28px;
+  }
+  .price-dollar { font-size: 18px; font-weight: 600; color: var(--navy); margin-top: 8px; }
+  .price-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px; font-weight: 700;
+    color: var(--navy); letter-spacing: -2px; line-height: 1;
+  }
+  .price-per { font-size: 13px; color: var(--text3); }
+
+  .price-divider { height: 0.5px; background: var(--border2); margin-bottom: 24px; }
+
+  .price-features { list-style: none; margin-bottom: 32px; }
+  .price-features li {
+    font-size: 13px; color: var(--text2);
+    padding: 8px 0;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 0.5px solid var(--border2);
+  }
+  .price-features li:last-child { border-bottom: none; }
+  .price-features li::before {
+    content: '✦'; color: var(--gold); font-size: 8px; flex-shrink: 0;
+  }
+
+  .btn-price {
+    display: block; width: 100%;
+    font-size: 14px; font-weight: 600;
+    text-align: center; text-decoration: none;
+    padding: 14px; border-radius: 10px;
+    cursor: pointer; border: none;
+    transition: all 0.2s; font-family: 'Inter', sans-serif;
+  }
+  .btn-price-solid { background: var(--navy); color: var(--white); }
+  .btn-price-solid:hover { background: #162436; }
+  .btn-price-border {
+    background: none; border: 0.5px solid var(--border);
+    color: var(--navy);
+  }
+  .btn-price-border:hover { border-color: var(--navy); }
+
+  /* ── WAITLIST ─────────────────────────────────── */
+  .waitlist {
+    padding: 140px 60px;
+    background: var(--navy);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .waitlist::before {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 700px; height: 400px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .waitlist .section-title { color: var(--cream); }
+  .waitlist .section-eye { display: block; margin-bottom: 16px; }
+  .waitlist-sub {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-style: italic;
+    color: var(--steel); max-width: 420px;
+    margin: 0 auto 40px; line-height: 1.65;
+    position: relative; z-index: 1;
+  }
+
+  .waitlist-form {
+    display: flex; gap: 0; max-width: 460px;
+    margin: 0 auto 16px;
+    background: rgba(255,255,255,0.06);
+    border: 0.5px solid rgba(201,168,76,0.35);
+    border-radius: 100px; overflow: hidden;
+    position: relative; z-index: 1;
+  }
+  .waitlist-form input {
+    flex: 1; background: none; border: none;
+    padding: 15px 24px; font-size: 14px;
+    color: var(--cream); font-family: 'Inter', sans-serif;
+    outline: none;
+  }
+  .waitlist-form input::placeholder { color: var(--steel); }
+  .waitlist-form button {
+    background: var(--gold2); color: var(--navy);
+    border: none; font-size: 13px; font-weight: 700;
+    padding: 13px 26px; cursor: pointer;
+    border-radius: 100px; margin: 3px;
+    transition: background 0.2s; font-family: 'Inter', sans-serif;
+  }
+  .waitlist-form button:hover { background: var(--gold3); }
+  .waitlist-note {
+    font-size: 12px; color: var(--steel);
+    position: relative; z-index: 1;
+  }
+
+  /* ── FOOTER ─────────────────────────────────── */
+  footer {
+    padding: 64px 60px 40px;
+    background: var(--white);
+    border-top: 0.5px solid var(--border2);
+  }
+
+  .footer-top {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 48px;
+    flex-wrap: wrap; gap: 40px;
+  }
+  .footer-brand .wordmark {
+    font-size: 22px; font-weight: 800; letter-spacing: -0.8px;
+  }
+  .footer-brand .wordmark .nx  { color: var(--navy); }
+  .footer-brand .wordmark .arb { color: var(--gold); font-weight: 300; }
+  .footer-brand p {
+    font-size: 13px; color: var(--text3); margin-top: 8px;
+    font-family: 'Playfair Display', serif; font-style: italic;
+    max-width: 240px; line-height: 1.6;
+  }
+  .footer-col h4 {
+    font-size: 9px; font-weight: 600; color: var(--text3);
+    letter-spacing: 3px; text-transform: uppercase; margin-bottom: 18px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 10px; }
+  .footer-col a {
+    font-size: 13px; color: var(--text3);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--text); }
+
+  .footer-bottom {
+    display: flex; justify-content: space-between;
+    align-items: center; padding-top: 28px;
+    border-top: 0.5px solid var(--border2);
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-bottom p { font-size: 12px; color: var(--text3); }
+  .footer-chips { display: flex; gap: 8px; }
+  .f-chip {
+    font-size: 10px; font-weight: 500;
+    padding: 4px 12px; border-radius: 100px;
+    border: 0.5px solid var(--border2);
+    color: var(--text3);
+  }
+
+  /* ── RESPONSIVE ─────────────────────────────── */
+  @media(max-width:960px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hero, .pipeline, .features, .how, .pricing, .waitlist { padding: 80px 24px; }
+    .hero-stats { flex-direction: column; }
+    .stat { border-right: none; border-bottom: 0.5px solid var(--border2); }
+    .stat:last-child { border-bottom: none; }
+    .flow { flex-direction: column; align-items: center; gap: 16px; }
+    .flow-arrow { transform: rotate(90deg); padding-top: 0; }
+    .bento { grid-template-columns: 1fr; }
+    .bc-1,.bc-2,.bc-3,.bc-4,.bc-5,.bc-6 { grid-column: span 1; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+    footer { padding: 48px 24px 32px; }
+    .footer-top { flex-direction: column; }
+  }
+  @media(max-width:600px) {
+    .hero-actions { flex-direction: column; width: 100%; }
+    .btn-hero,.btn-outline { width: 100%; text-align: center; }
+    .steps { grid-template-columns: 1fr; }
+    .hero-title { letter-spacing: -1.5px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────── -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg class="nav-seal" viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="15" stroke="#B8922A" stroke-width="0.7" stroke-dasharray="2,3"/>
+      <circle cx="16" cy="16" r="12.5" stroke="#B8922A" stroke-width="0.8"/>
+      <circle cx="16" cy="16" r="11.5" fill="#0D1B2A"/>
+      <line x1="10" y1="10" x2="10" y2="22" stroke="#F0E6D3" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="22" y1="10" x2="22" y2="22" stroke="#F0E6D3" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="10" y1="10" x2="22" y2="22" stroke="#B8922A" stroke-width="1.1" stroke-linecap="round"/>
+      <circle cx="10" cy="10" r="1.6" fill="#B8922A"/>
+      <circle cx="22" cy="22" r="1.6" fill="#B8922A"/>
+    </svg>
+    <span class="nav-wordmark"><span class="nx">Nex</span><span class="arb">Arb</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#waitlist">Early access</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#" class="btn-ghost">Sign in</a>
+    <a href="#waitlist" class="btn-primary">Get early access →</a>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">
+    <div class="hero-badge-dot"></div>
+    Now in private beta
+  </div>
+  <h1 class="hero-title">
+    The arbitrage engine<br>that <span class="gold">never sleeps.</span>
+  </h1>
+  <p class="hero-sub">Autonomous. Intelligent. Profitable.</p>
+  <p class="hero-tagline">
+    <span class="hl">Nex</span>t Agentic <span class="hl">Arb</span>itrage for the modern seller.
+  </p>
+  <div class="hero-actions">
+    <a href="#waitlist" class="btn-hero">Start for free →</a>
+    <a href="#how" class="btn-outline">See how it works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num">171+</span>
+      <span class="stat-label">Deals per scan</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">3×</span>
+      <span class="stat-label">Daily automation</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">$0</span>
+      <span class="stat-label">Manual effort</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">3</span>
+      <span class="stat-label">Channels routed</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── LOGO BAR ──────────────────────────────── -->
+<div class="logo-bar">
+  <p class="logo-bar-label">Works with the platforms you already use</p>
+  <div class="logo-bar-row">
+    <span class="logo-bar-item">Amazon FBA</span>
+    <span class="logo-bar-item">·</span>
+    <span class="logo-bar-item">Walmart WFS</span>
+    <span class="logo-bar-item">·</span>
+    <span class="logo-bar-item">Alibaba.com</span>
+    <span class="logo-bar-item">·</span>
+    <span class="logo-bar-item">Tactical Arbitrage</span>
+    <span class="logo-bar-item">·</span>
+    <span class="logo-bar-item">Telegram</span>
+    <span class="logo-bar-item">·</span>
+    <span class="logo-bar-item">Claude AI</span>
+  </div>
+</div>
+
+<!-- ── PIPELINE ──────────────────────────────── -->
+<section class="pipeline" id="how">
+  <div style="max-width:1100px; margin:0 auto;">
+    <span class="section-eye">How it works</span>
+    <h2 class="section-title">From scan to sale.<br>Automatically.</h2>
+    <p class="section-sub">NexArb's agentic AI monitors thousands of products, verifies real margins, and routes each deal to its most profitable channel — without you lifting a finger.</p>
+    <div class="flow">
+      <div class="flow-node">
+        <div class="flow-icon">🔍</div>
+        <div class="flow-label">Scan</div>
+        <div class="flow-desc">14,000+ products scanned across retail 3× daily</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="flow-icon">⚖️</div>
+        <div class="flow-label">Analyse</div>
+        <div class="flow-desc">Real margins verified across Amazon & Walmart</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="flow-icon">🎯</div>
+        <div class="flow-label">Route</div>
+        <div class="flow-desc">Auto-routed to Amazon FBA, Walmart WFS, or Alibaba</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="flow-icon">🤖</div>
+        <div class="flow-label">Score</div>
+        <div class="flow-desc">Claude AI ranks top picks and sends Telegram alerts</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="flow-icon">💰</div>
+        <div class="flow-label">Profit</div>
+        <div class="flow-desc">Review, approve, and purchase — nothing else needed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ──────────────────────────────── -->
+<section class="features" id="features">
+  <div style="max-width:1100px; margin:0 auto;">
+    <span class="section-eye">Features</span>
+    <h2 class="section-title">Everything a serious<br>seller needs.</h2>
+    <div class="bento">
+      <div class="bento-card bc-1">
+        <span class="bento-tag">Triple-Channel Routing</span>
+        <div class="bento-icon">⚡</div>
+        <h3 class="bento-title">Amazon. Walmart. Alibaba.<br>One intelligent pipeline.</h3>
+        <p class="bento-body">NexArb checks gating on both Amazon and Walmart simultaneously, calculates verified margins for each channel, and routes automatically to the highest-profit destination. When both are gated, it surfaces the equivalent product on Alibaba for private label sourcing.</p>
+        <div class="channel-chips">
+          <span class="chip chip-amz">Amazon FBA</span>
+          <span class="chip chip-wmt">Walmart WFS</span>
+          <span class="chip chip-ali">Alibaba</span>
+        </div>
+      </div>
+      <div class="bento-card bc-2">
+        <span class="bento-tag">Agentic AI</span>
+        <div class="bento-icon">🧠</div>
+        <h3 class="bento-title">Claude AI scores every deal.</h3>
+        <p class="bento-body">Powered by Claude Haiku, NexArb analyses BSR, competition depth, margin confidence, and category risk to score each product. Top picks land in your Telegram the moment they're found.</p>
+      </div>
+      <div class="bento-card bc-3">
+        <span class="bento-tag">Verified Margins</span>
+        <div class="bento-icon">✅</div>
+        <h3 class="bento-title">Real prices. Real margins.</h3>
+        <p class="bento-body">A 50% Walmart floor filter eliminates deals that only work on paper. Every recommendation is profitable even at worst-case marketplace pricing.</p>
+      </div>
+      <div class="bento-card bc-4">
+        <span class="bento-tag">Live Dashboard</span>
+        <div class="bento-icon">📊</div>
+        <h3 class="bento-title">Your pipeline, live.</h3>
+        <p class="bento-body">WebSocket-powered dashboard shows deals, service health, P&L tracker, and channel breakdown in real time — updated every 30 seconds.</p>
+      </div>
+      <div class="bento-card bc-5">
+        <span class="bento-tag">Instant Alerts</span>
+        <div class="bento-icon">🔔</div>
+        <h3 class="bento-title">Telegram alerts, always on.</h3>
+        <p class="bento-body">Deal notifications, AI top picks, Alibaba sourcing opportunities, and system health — delivered to your phone the moment they happen.</p>
+      </div>
+      <div class="bento-card bc-6" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;">
+        <div>
+          <span class="bento-tag" style="color:var(--gold2);border-color:rgba(201,168,76,0.3);">Fully Automated</span>
+          <h3 class="bento-title" style="font-size:24px;max-width:560px;">Runs 3× daily. Scans 14,000+ products. Zero manual work required.</h3>
+        </div>
+        <a href="#waitlist" style="flex-shrink:0;font-size:14px;padding:14px 28px;background:var(--gold2);color:var(--navy);border:none;border-radius:100px;font-weight:700;cursor:pointer;text-decoration:none;transition:background 0.2s;">Get early access →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STEPS ─────────────────────────────────── -->
+<section class="how" id="steps">
+  <div style="max-width:1100px; margin:0 auto;">
+    <span class="section-eye">The process</span>
+    <h2 class="section-title" style="margin-bottom:48px;">Up and running<br>in four steps.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot"></div>
+        <span class="step-num">01</span>
+        <div class="step-title">Connect your accounts</div>
+        <p class="step-body">Link your Amazon SP-API, Walmart Seller credentials, and Alibaba App Key. Takes under 10 minutes with our guided setup.</p>
+      </div>
+      <div class="step">
+        <div class="step-dot"></div>
+        <span class="step-num">02</span>
+        <div class="step-title">Set your filters</div>
+        <p class="step-body">Define minimum profit, ROI thresholds, BSR limits, and preferred categories. NexArb learns what works for your business.</p>
+      </div>
+      <div class="step">
+        <div class="step-dot"></div>
+        <span class="step-num">03</span>
+        <div class="step-title">Receive your top picks</div>
+        <p class="step-body">Every morning, afternoon, and evening — AI-scored top deals arrive in Telegram, with verified margins and confidence ratings.</p>
+      </div>
+      <div class="step">
+        <div class="step-dot"></div>
+        <span class="step-num">04</span>
+        <div class="step-title">Approve and profit</div>
+        <p class="step-body">One tap to approve. NexArb tracks your P&L, manages deduplication, and keeps the entire pipeline flowing automatically.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ───────────────────────────────── -->
+<section class="pricing" id="pricing">
+  <span class="section-eye" style="display:block;margin-bottom:14px;">Pricing</span>
+  <h2 class="section-title" style="margin-bottom:10px;">Simple, transparent pricing.</h2>
+  <p style="font-size:16px;color:var(--text3);margin-bottom:56px;">Cancel anytime. No setup fees. 14-day free trial.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <span class="price-tier">Starter</span>
+      <div class="price-name">Solo</div>
+      <p class="price-desc">For sellers just getting started with automated arbitrage.</p>
+      <div class="price-amount">
+        <span class="price-dollar">$</span>
+        <span class="price-num">99</span>
+        <span class="price-per">/mo</span>
+      </div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li>1 marketplace connection</li>
+        <li>50 deals per day</li>
+        <li>Telegram alerts</li>
+        <li>Basic AI scoring</li>
+        <li>Dashboard access</li>
+      </ul>
+      <a href="#waitlist" class="btn-price btn-price-border">Get started</a>
+    </div>
+    <div class="price-card featured">
+      <div class="price-badge">MOST POPULAR</div>
+      <span class="price-tier">Growth</span>
+      <div class="price-name">Professional</div>
+      <p class="price-desc">For active sellers scaling across Amazon and Walmart simultaneously.</p>
+      <div class="price-amount">
+        <span class="price-dollar">$</span>
+        <span class="price-num">199</span>
+        <span class="price-per">/mo</span>
+      </div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li>Amazon FBA + Walmart WFS</li>
+        <li>500 deals per day</li>
+        <li>Full AI scoring + confidence</li>
+        <li>Alibaba sourcing alerts</li>
+        <li>Verified price checking</li>
+        <li>Real-time dashboard</li>
+        <li>P&L tracking</li>
+      </ul>
+      <a href="#waitlist" class="btn-price btn-price-solid">Get started →</a>
+    </div>
+    <div class="price-card">
+      <span class="price-tier">Pro</span>
+      <div class="price-name">Agency</div>
+      <p class="price-desc">For power sellers and agencies managing multiple accounts at scale.</p>
+      <div class="price-amount">
+        <span class="price-dollar">$</span>
+        <span class="price-num">399</span>
+        <span class="price-per">/mo</span>
+      </div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li>Unlimited deals per day</li>
+        <li>Up to 10 accounts</li>
+        <li>Full API access</li>
+        <li>Custom filters & rules</li>
+        <li>White-label dashboard</li>
+        <li>Priority support</li>
+        <li>Dedicated onboarding</li>
+      </ul>
+      <a href="#waitlist" class="btn-price btn-price-border">Contact us</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── WAITLIST ───────────────────────────────── -->
+<section class="waitlist" id="waitlist">
+  <span class="section-eye" style="display:block;margin-bottom:16px;">Early Access</span>
+  <h2 class="section-title" style="max-width:580px;margin:0 auto 16px;">
+    The waitlist<br><span style="color:var(--gold2);font-style:italic;">is open.</span>
+  </h2>
+  <p class="waitlist-sub">Join sellers already automating their arbitrage with NexArb. Early access members get 3 months free.</p>
+  <div class="waitlist-form">
+    <input type="email" placeholder="your@email.com"/>
+    <button type="button">Join waitlist →</button>
+  </div>
+  <p class="waitlist-note">No credit card required · 3 months free · Cancel anytime</p>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────── -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="wordmark"><span class="nx">Nex</span><span class="arb">Arb</span></div>
+      <p>Next Agentic Arbitrage for the modern seller.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#waitlist">Early access</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Channels</h4>
+      <ul>
+        <li><a href="#">Amazon FBA</a></li>
+        <li><a href="#">Walmart WFS</a></li>
+        <li><a href="#">Alibaba sourcing</a></li>
+        <li><a href="#">Multi-channel</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">nexarb.io</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 NexArb · Five S LLC · San Jose, CA · All rights reserved.</p>
+    <div class="footer-chips">
+      <span class="f-chip">AI-Powered</span>
+      <span class="f-chip">3 Channels</span>
+      <span class="f-chip">nexarb.io</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
