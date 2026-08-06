@@ -925,7 +925,7 @@
   <p class="waitlist-sub">Join sellers already automating their arbitrage with NexArb. Early access members get 3 months free.</p>
   <div class="waitlist-form">
     <input type="email" placeholder="your@email.com"/>
-    <button type="button">Join waitlist →</button>
+    <button type="button" id="waitlist-btn" onclick="submitWaitlist()">Join waitlist →</button>
   </div>
   <p class="waitlist-note">No credit card required · 3 months free · Cancel anytime</p>
 </section>
@@ -974,6 +974,57 @@
     </div>
   </div>
 </footer>
+
+
+<script>
+async function submitWaitlist() {
+  const input = document.querySelector('.waitlist-form input');
+  const btn = document.getElementById('waitlist-btn');
+  const email = input.value.trim();
+
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = '#E24B4A';
+    input.placeholder = 'Please enter a valid email';
+    setTimeout(() => {
+      input.style.borderColor = '';
+      input.placeholder = 'your@email.com';
+    }, 2000);
+    return;
+  }
+
+  btn.textContent = 'Joining...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      input.value = '';
+      btn.textContent = '✓ You're on the list!';
+      btn.style.background = '#10B981';
+      document.querySelector('.waitlist-note').textContent =
+        '🎉 ' + data.message;
+    } else {
+      throw new Error(data.error);
+    }
+  } catch (err) {
+    btn.textContent = 'Try again →';
+    btn.disabled = false;
+    document.querySelector('.waitlist-note').textContent =
+      err.message || 'Something went wrong. Please try again.';
+  }
+}
+
+// Allow Enter key
+document.querySelector('.waitlist-form input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') submitWaitlist();
+});
+</script>
 
 </body>
 </html>
