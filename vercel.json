@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "nexarb-app",
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "api/waitlist.js", "use": "@vercel/node" }
