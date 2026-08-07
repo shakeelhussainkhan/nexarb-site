@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NexArb — Legal & Support</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --navy:#0D1B2A;--gold:#B8922A;--cream:#F0E6D3;
+    --white:#FFFFFF;--off:#F5F5F7;--text:#1D1D1F;
+    --text2:#3D3D3F;--text3:#6E6E73;--border:#D2D2D7;--border2:#E8E8ED;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--white);color:var(--text);-webkit-font-smoothing:antialiased}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:60px;background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);border-bottom:0.5px solid var(--border2)}
+  .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+  .nav-seal{width:28px;height:28px}
+  .nav-wordmark{font-size:18px;font-weight:800;letter-spacing:-0.5px}
+  .nav-wordmark .nx{color:var(--navy)}
+  .nav-wordmark .arb{color:var(--gold);font-weight:300}
+  .nav-back{font-size:13px;color:var(--text3);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s}
+  .nav-back:hover{color:var(--text)}
+
+  /* SIDEBAR + LAYOUT */
+  .layout{display:flex;min-height:100vh;padding-top:60px}
+  .sidebar{width:260px;flex-shrink:0;border-right:0.5px solid var(--border2);padding:40px 24px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+  .sidebar-section{margin-bottom:32px}
+  .sidebar-section h4{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
+  .sidebar-section a{display:block;font-size:13px;color:var(--text3);text-decoration:none;padding:6px 12px;border-radius:6px;margin-bottom:2px;transition:all 0.15s}
+  .sidebar-section a:hover{color:var(--text);background:var(--off)}
+  .sidebar-section a.active{color:var(--navy);background:rgba(184,146,42,0.08);font-weight:500}
+
+  /* CONTENT */
+  .content{flex:1;padding:60px 80px;max-width:860px}
+  .page{display:none}
+  .page.active{display:block}
+
+  .page-eye{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;display:block}
+  .page-title{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:var(--navy);letter-spacing:-1px;line-height:1.1;margin-bottom:12px}
+  .page-date{font-size:13px;color:var(--text3);margin-bottom:48px;padding-bottom:24px;border-bottom:0.5px solid var(--border2)}
+
+  h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);margin:40px 0 16px;letter-spacing:-0.3px}
+  h3{font-size:15px;font-weight:600;color:var(--text);margin:24px 0 10px}
+  p{font-size:15px;color:var(--text2);line-height:1.75;margin-bottom:16px}
+  ul,ol{margin:0 0 16px 20px}
+  li{font-size:15px;color:var(--text2);line-height:1.75;margin-bottom:8px}
+  a{color:var(--gold);text-decoration:none}
+  a:hover{text-decoration:underline}
+  strong{font-weight:600;color:var(--text)}
+
+  .highlight-box{background:rgba(184,146,42,0.06);border:0.5px solid rgba(184,146,42,0.2);border-radius:10px;padding:20px 24px;margin:24px 0}
+  .highlight-box p{margin:0;font-size:14px}
+
+  .faq-item{border-bottom:0.5px solid var(--border2);padding:20px 0}
+  .faq-item:last-child{border-bottom:none}
+  .faq-q{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+  .faq-q::after{content:'↓';font-size:12px;color:var(--text3);transition:transform 0.2s}
+  .faq-q.open::after{transform:rotate(180deg)}
+  .faq-a{font-size:14px;color:var(--text2);line-height:1.7;display:none}
+  .faq-a.open{display:block}
+
+  .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+  .plan-card{border:0.5px solid var(--border2);border-radius:10px;padding:20px}
+  .plan-card.featured{border-color:var(--navy)}
+  .plan-name{font-weight:700;color:var(--navy);margin-bottom:4px}
+  .plan-price{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--navy);margin-bottom:12px}
+  .plan-price span{font-size:14px;font-weight:400;color:var(--text3)}
+  .plan-features{list-style:none;margin:0}
+  .plan-features li{font-size:12px;color:var(--text2);padding:4px 0;display:flex;gap:8px}
+  .plan-features li::before{content:'✦';color:var(--gold);font-size:8px;margin-top:4px;flex-shrink:0}
+
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+  .contact-card{border:0.5px solid var(--border2);border-radius:10px;padding:20px}
+  .contact-card h4{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:8px}
+  .contact-card p{font-size:13px;color:var(--text3);margin:0;line-height:1.6}
+  .contact-card a{color:var(--gold)}
+
+  @media(max-width:768px){
+    nav{padding:0 24px}
+    .layout{flex-direction:column}
+    .sidebar{width:100%;height:auto;position:static;border-right:none;border-bottom:0.5px solid var(--border2);padding:24px}
+    .content{padding:32px 24px}
+    .plan-grid,.contact-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <svg class="nav-seal" viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="15" stroke="#B8922A" stroke-width="0.7" stroke-dasharray="2,3"/>
+      <circle cx="16" cy="16" r="12.5" stroke="#B8922A" stroke-width="0.8"/>
+      <circle cx="16" cy="16" r="11.5" fill="#0D1B2A"/>
+      <line x1="10" y1="10" x2="10" y2="22" stroke="#F0E6D3" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="22" y1="10" x2="22" y2="22" stroke="#F0E6D3" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="10" y1="10" x2="22" y2="22" stroke="#B8922A" stroke-width="1.1" stroke-linecap="round"/>
+      <circle cx="10" cy="10" r="1.6" fill="#B8922A"/>
+      <circle cx="22" cy="22" r="1.6" fill="#B8922A"/>
+    </svg>
+    <span class="nav-wordmark"><span class="nx">Nex</span><span class="arb">Arb</span></span>
+  </a>
+  <a href="/" class="nav-back">← Back to nexarb.io</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <h4>Legal</h4>
+      <a href="#" class="active" onclick="showPage('privacy')">Privacy Policy</a>
+      <a href="#" onclick="showPage('terms')">Terms of Service</a>
+      <a href="#" onclick="showPage('subscription')">Subscription Agreement</a>
+      <a href="#" onclick="showPage('security')">Security</a>
+      <a href="#" onclick="showPage('acceptable')">Acceptable Use</a>
+      <a href="#" onclick="showPage('cookies')">Cookie Policy</a>
+    </div>
+    <div class="sidebar-section">
+      <h4>Support</h4>
+      <a href="#" onclick="showPage('faq')">FAQ</a>
+      <a href="#" onclick="showPage('pricing-info')">Pricing & Billing</a>
+      <a href="#" onclick="showPage('contact')">Contact Us</a>
+    </div>
+    <div class="sidebar-section">
+      <h4>Company</h4>
+      <a href="#" onclick="showPage('about')">About NexArb</a>
+      <a href="#" onclick="showPage('refund')">Refund Policy</a>
+    </div>
+  </aside>
+
+  <main class="content">
+
+    <!-- PRIVACY POLICY -->
+    <div id="privacy" class="page active">
+      <span class="page-eye">Legal</span>
+      <h1 class="page-title">Privacy Policy</h1>
+      <p class="page-date">Last updated: August 6, 2026 · Effective: August 6, 2026</p>
+
+      <div class="highlight-box">
+        <p><strong>Summary:</strong> NexArb collects only the data necessary to provide our service. We never sell your personal data. You can request deletion at any time.</p>
+      </div>
+
+      <h2>1. Who We Are</h2>
+      <p>NexArb is operated by Five S LLC, a California limited liability company ("we," "us," or "our"). Our registered address is 5777 Foligno Way, San Jose, CA 95138. We provide an AI-powered arbitrage automation platform for Amazon FBA and Walmart WFS sellers.</p>
+
+      <h2>2. Information We Collect</h2>
+      <h3>Account Information</h3>
+      <p>When you create an account, we collect your name, email address, and authentication credentials (managed securely by Clerk, our authentication provider).</p>
+      <h3>Marketplace Credentials</h3>
+      <p>To connect your seller accounts, we collect Amazon SP-API keys, Walmart Seller API credentials, and Alibaba App Keys. These are encrypted at rest and never shared with third parties.</p>
+      <h3>Usage Data</h3>
+      <p>We collect information about how you use NexArb, including deals viewed, actions taken (Buy/Skip), scan frequency, and dashboard interactions. This helps us improve our service.</p>
+      <h3>Payment Information</h3>
+      <p>Payment processing is handled by Stripe. We do not store credit card numbers on our servers. We receive only transaction confirmations and subscription status.</p>
+      <h3>Technical Data</h3>
+      <p>We automatically collect IP addresses, browser type, device information, and log data when you use our service.</p>
+
+      <h2>3. How We Use Your Information</h2>
+      <ul>
+        <li>To provide and improve the NexArb platform</li>
+        <li>To process your subscription payments</li>
+        <li>To send service notifications and updates</li>
+        <li>To detect and prevent fraud and abuse</li>
+        <li>To comply with legal obligations</li>
+        <li>To respond to your support requests</li>
+      </ul>
+
+      <h2>4. Data Sharing</h2>
+      <p>We do not sell, rent, or trade your personal information. We share data only with:</p>
+      <ul>
+        <li><strong>Clerk</strong> — authentication and user management</li>
+        <li><strong>Stripe</strong> — payment processing</li>
+        <li><strong>Supabase</strong> — database infrastructure</li>
+        <li><strong>Vercel</strong> — application hosting</li>
+        <li><strong>Anthropic (Claude API)</strong> — AI deal analysis</li>
+      </ul>
+
+      <h2>5. Data Retention</h2>
+      <p>We retain your account data for as long as your account is active. Deal history and analytics data are retained for 90 days. You may request deletion of your data at any time by emailing privacy@nexarb.io.</p>
+
+      <h2>6. Your Rights</h2>
+      <p>Depending on your location, you may have rights to access, correct, delete, or export your personal data. California residents have additional rights under CCPA. To exercise these rights, contact us at privacy@nexarb.io.</p>
+
+      <h2>7. Security</h2>
+      <p>We use industry-standard encryption (TLS 1.3) for all data in transit. API credentials are encrypted at rest. We conduct regular security reviews and follow OWASP guidelines.</p>
+
+      <h2>8. Contact</h2>
+      <p>For privacy questions: <a href="mailto:privacy@nexarb.io">privacy@nexarb.io</a><br>Five S LLC · 5777 Foligno Way · San Jose, CA 95138</p>
+    </div>
+
+    <!-- TERMS OF SERVICE -->
+    <div id="terms" class="page">
+      <span class="page-eye">Legal</span>
+      <h1 class="page-title">Terms of Service</h1>
+      <p class="page-date">Last updated: August 6, 2026 · Effective: August 6, 2026</p>
+
+      <div class="highlight-box">
+        <p><strong>By using NexArb, you agree to these terms. Please read them carefully.</strong></p>
+      </div>
+
+      <h2>1. Acceptance of Terms</h2>
+      <p>By accessing or using NexArb ("Service"), you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree, do not use our Service.</p>
+
+      <h2>2. Description of Service</h2>
+      <p>NexArb provides an automated arbitrage intelligence platform that scans retail products, calculates margins, and routes deals across Amazon FBA, Walmart WFS, and Alibaba sourcing channels. The Service is provided "as is" and we make no guarantees about profitability.</p>
+
+      <h2>3. Eligibility</h2>
+      <p>You must be at least 18 years old and have a valid Amazon or Walmart seller account to use NexArb. By using the Service, you represent that you meet these requirements.</p>
+
+      <h2>4. Account Responsibilities</h2>
+      <ul>
+        <li>You are responsible for maintaining the security of your account credentials</li>
+        <li>You must provide accurate and complete information during registration</li>
+        <li>You are responsible for all activity that occurs under your account</li>
+        <li>You must notify us immediately of any unauthorized access</li>
+      </ul>
+
+      <h2>5. Marketplace Compliance</h2>
+      <p>You are solely responsible for ensuring your use of NexArb complies with Amazon's, Walmart's, and Alibaba's terms of service. NexArb is not responsible for account suspensions or penalties imposed by any marketplace.</p>
+
+      <h2>6. Prohibited Uses</h2>
+      <ul>
+        <li>Using NexArb to violate any marketplace policies</li>
+        <li>Sharing your account with unauthorized users</li>
+        <li>Attempting to reverse-engineer or scrape our systems</li>
+        <li>Using NexArb for any illegal purpose</li>
+        <li>Uploading malicious code or attempting unauthorized access</li>
+      </ul>
+
+      <h2>7. Intellectual Property</h2>
+      <p>NexArb and its content, features, and functionality are owned by Five S LLC and are protected by copyright, trademark, and other intellectual property laws. You may not copy, modify, or distribute our platform without written permission.</p>
+
+      <h2>8. Disclaimer of Warranties</h2>
+      <p>NEXARB IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND. WE DO NOT GUARANTEE THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR THAT ANY SPECIFIC DEALS OR PROFITS WILL RESULT FROM USE OF OUR SERVICE.</p>
+
+      <h2>9. Limitation of Liability</h2>
+      <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, FIVE S LLC SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES. OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT YOU PAID IN THE LAST 3 MONTHS.</p>
+
+      <h2>10. Governing Law</h2>
+      <p>These Terms are governed by the laws of the State of California without regard to conflict of law provisions. Any disputes shall be resolved in Santa Clara County, California.</p>
+
+      <h2>11. Changes to Terms</h2>
+      <p>We may update these Terms at any time. We will notify you of material changes by email. Continued use of the Service after changes constitutes acceptance.</p>
+
+      <h2>12. Contact</h2>
+      <p>Legal questions: <a href="mailto:legal@nexarb.io">legal@nexarb.io</a></p>
+    </div>
+
+    <!-- SUBSCRIPTION AGREEMENT -->
+    <div id="subscription" class="page">
+      <span class="page-eye">Legal</span>
+      <h1 class="page-title">Subscription Agreement</h1>
+      <p class="page-date">Last updated: August 6, 2026</p>
+
+      <h2>Plans & Pricing</h2>
+      <div class="plan-grid">
+        <div class="plan-card">
+          <div class="plan-name">Solo</div>
+          <div class="plan-price">$99<span>/month</span></div>
+          <ul class="plan-features">
+            <li>1 marketplace connection</li>
+            <li>50 deals per day</li>
+            <li>Telegram alerts</li>
+            <li>Basic AI scoring</li>
+            <li>Dashboard access</li>
+          </ul>
+        </div>
+        <div class="plan-card featured">
+          <div class="plan-name">Professional ★</div>
+          <div class="plan-price">$199<span>/month</span></div>
+          <ul class="plan-features">
+            <li>Amazon FBA + Walmart WFS</li>
+            <li>500 deals per day</li>
+            <li>Full AI scoring</li>
+            <li>Alibaba sourcing</li>
+            <li>Real-time dashboard</li>
+            <li>P&L tracking</li>
+          </ul>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Agency</div>
+          <div class="plan-price">$399<span>/month</span></div>
+          <ul class="plan-features">
+            <li>Unlimited deals</li>
+            <li>Up to 10 accounts</li>
+            <li>API access</li>
+            <li>White-label dashboard</li>
+            <li>Priority support</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>Billing Terms</h2>
+      <ul>
+        <li>Subscriptions are billed monthly in advance</li>
+        <li>Your first charge occurs at the end of your 14-day free trial</li>
+        <li>Payments are processed securely by Stripe</li>
+        <li>All prices are in USD and exclude applicable taxes</li>
+        <li>We may change pricing with 30 days notice</li>
+      </ul>
+
+      <h2>Free Trial</h2>
+      <p>New accounts receive a 14-day free trial of the Professional plan. No credit card is required to start. If you add a payment method and do not cancel before the trial ends, you will be charged the monthly rate.</p>
+
+      <h2>Cancellation</h2>
+      <p>You may cancel your subscription at any time from your billing settings. Cancellation takes effect at the end of your current billing period. You retain access to all features until then.</p>
+
+      <h2>Refunds</h2>
+      <p>We offer a 7-day money-back guarantee for first-time subscribers. After 7 days, subscription fees are non-refundable. See our full Refund Policy for details.</p>
+
+      <h2>Auto-Renewal</h2>
+      <p>Subscriptions automatically renew each month unless cancelled. You will receive an email reminder 3 days before each renewal charge.</p>
+
+      <h2>Downgrades & Upgrades</h2>
+      <p>You may upgrade your plan at any time — the difference is charged immediately on a prorated basis. Downgrades take effect at the next billing cycle.</p>
+    </div>
+
+    <!-- SECURITY -->
+    <div id="security" class="page">
+      <span class="page-eye">Trust & Safety</span>
+      <h1 class="page-title">Security</h1>
+      <p class="page-date">Last updated: August 6, 2026</p>
+
+      <div class="highlight-box">
+        <p><strong>Your marketplace credentials and financial data are our highest priority.</strong> We apply enterprise-grade security to every layer of our platform.</p>
+      </div>
+
+      <h2>Data Encryption</h2>
+      <ul>
+        <li><strong>In transit:</strong> All data transmitted between your browser and NexArb uses TLS 1.3 encryption</li>
+        <li><strong>At rest:</strong> All sensitive data including API keys is encrypted using AES-256</li>
+        <li><strong>Database:</strong> Supabase provides encrypted PostgreSQL with automatic backups</li>
+      </ul>
+
+      <h2>Authentication</h2>
+      <p>Authentication is powered by Clerk, an enterprise-grade identity platform. We support:</p>
+      <ul>
+        <li>Email and password with bcrypt hashing</li>
+        <li>Google OAuth 2.0</li>
+        <li>Automatic session expiry after inactivity</li>
+        <li>Brute force protection and rate limiting</li>
+      </ul>
+
+      <h2>API Key Security</h2>
+      <p>Your Amazon SP-API, Walmart, and Alibaba credentials are stored encrypted and are never logged, displayed in full, or transmitted to third parties. Credentials are only used to make authorized API calls on your behalf.</p>
+
+      <h2>Infrastructure Security</h2>
+      <ul>
+        <li>Hosted on Vercel (frontend) and DigitalOcean (backend) with enterprise SLAs</li>
+        <li>UFW firewall with restricted port access</li>
+        <li>Regular security patches and updates</li>
+        <li>CORS protection on all API endpoints</li>
+      </ul>
+
+      <h2>Reporting Vulnerabilities</h2>
+      <p>If you discover a security vulnerability, please report it responsibly to <a href="mailto:security@nexarb.io">security@nexarb.io</a>. We will respond within 24 hours and work to resolve verified issues promptly.</p>
+    </div>
+
+    <!-- ACCEPTABLE USE -->
+    <div id="acceptable" class="page">
+      <span class="page-eye">Legal</span>
+      <h1 class="page-title">Acceptable Use Policy</h1>
+      <p class="page-date">Last updated: August 6, 2026</p>
+
+      <p>This Acceptable Use Policy governs your use of NexArb. Violations may result in account suspension or termination.</p>
+
+      <h2>Permitted Uses</h2>
+      <ul>
+        <li>Using NexArb to identify arbitrage opportunities for your own seller accounts</li>
+        <li>Connecting your legitimate Amazon, Walmart, and Alibaba seller credentials</li>
+        <li>Sharing your dashboard with employees or contractors working on your behalf</li>
+      </ul>
+
+      <h2>Prohibited Uses</h2>
+      <ul>
+        <li>Violating Amazon's, Walmart's, or Alibaba's terms of service</li>
+        <li>Selling counterfeit, restricted, or prohibited products</li>
+        <li>Using NexArb to manipulate marketplace pricing or rankings</li>
+        <li>Sharing account access with unauthorized third parties</li>
+        <li>Attempting to circumvent our rate limits or access controls</li>
+        <li>Reverse engineering or scraping our platform</li>
+        <li>Using NexArb for money laundering or fraudulent transactions</li>
+      </ul>
+
+      <h2>Marketplace Compliance</h2>
+      <p>You are solely responsible for ensuring your arbitrage activities comply with all applicable marketplace policies. NexArb provides tools and intelligence — purchasing decisions and compliance are your responsibility.</p>
+    </div>
+
+    <!-- COOKIE POLICY -->
+    <div id="cookies" class="page">
+      <span class="page-eye">Legal</span>
+      <h1 class="page-title">Cookie Policy</h1>
+      <p class="page-date">Last updated: August 6, 2026</p>
+
+      <p>NexArb uses cookies and similar technologies to provide and improve our service.</p>
+
+      <h2>Essential Cookies</h2>
+      <p>These cookies are required for the platform to function and cannot be disabled:</p>
+      <ul>
+        <li><strong>Authentication cookies</strong> — Maintain your login session (Clerk)</li>
+        <li><strong>Security cookies</strong> — CSRF protection and fraud prevention</li>
+        <li><strong>Preference cookies</strong> — Remember your dashboard settings</li>
+      </ul>
+
+      <h2>Analytics Cookies</h2>
+      <p>We use anonymous analytics to understand how users interact with NexArb and improve our platform. No personally identifiable information is collected through analytics.</p>
+
+      <h2>Managing Cookies</h2>
+      <p>You can control cookies through your browser settings. Disabling essential cookies will prevent you from using NexArb. For analytics cookies, you can opt out at any time by contacting us at privacy@nexarb.io.</p>
+    </div>
+
+    <!-- FAQ -->
+    <div id="faq" class="page">
+      <span class="page-eye">Support</span>
+      <h1 class="page-title">Frequently Asked Questions</h1>
+      <p class="page-date">Updated regularly · Can't find your answer? <a href="mailto:support@nexarb.io">Contact support</a></p>
+
+      <h2>Getting Started</h2>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What is NexArb?</div>
+        <div class="faq-a">NexArb is an AI-powered arbitrage platform that automatically scans 14,000+ retail products daily, verifies margins across Amazon FBA and Walmart WFS, and routes each deal to the most profitable channel. When both channels are gated, it finds equivalent products on Alibaba for private label sourcing.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Do I need an Amazon or Walmart account to use NexArb?</div>
+        <div class="faq-a">Yes. NexArb is designed for active Amazon FBA and/or Walmart WFS sellers. You'll need at least one active seller account to connect. You can start with just Amazon and add Walmart later.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How long does setup take?</div>
+        <div class="faq-a">Most sellers are fully set up within 15-30 minutes. The onboarding wizard guides you through connecting your Amazon SP-API credentials, Walmart API keys, and setting your deal filters. After that, NexArb runs automatically.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Is there a free trial?</div>
+        <div class="faq-a">Yes! All new accounts receive a 14-day free trial of the Professional plan ($199/mo value). No credit card is required to start. You'll only be charged if you add a payment method and don't cancel before the trial ends.</div>
+      </div>
+
+      <h2>How It Works</h2>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How does NexArb find deals?</div>
+        <div class="faq-a">NexArb integrates with Tactical Arbitrage to scan retail store products and compares them against Amazon and Walmart marketplace prices. It checks gating status via Amazon SP-API and Walmart Seller API, calculates real margins including all fees, and presents only profitable opportunities.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How accurate are the margins?</div>
+        <div class="faq-a">NexArb uses real-time marketplace prices and applies actual Amazon FBA and Walmart WFS fee schedules. We also apply a 50% Walmart floor filter — any deal must be profitable even if the Walmart price is 50% lower than the Amazon price. Deals are labeled "Verified" (real-time prices confirmed) or "Estimated" (based on scan-time data).</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What is the Alibaba sourcing feature?</div>
+        <div class="faq-a">When a product is gated on both Amazon and Walmart, NexArb automatically searches Alibaba for equivalent products suitable for private label sourcing. It calculates potential margins, minimum order quantities, and sends you a sourcing opportunity alert with a direct Alibaba search link.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How often does NexArb scan?</div>
+        <div class="faq-a">NexArb runs three automated scans daily — at 5:30 AM, 1:30 PM, and 9:30 PM Pacific Time. The AI reviewer runs 15 minutes after each scan to score and rank the top opportunities. You can also trigger a manual scan from the dashboard at any time.</div>
+      </div>
+
+      <h2>Billing & Account</h2>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?</div>
+        <div class="faq-a">Yes. You can cancel your subscription at any time from the Billing section of your dashboard. Cancellation takes effect at the end of your current billing period and you retain full access until then. No cancellation fees apply.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Do you offer refunds?</div>
+        <div class="faq-a">We offer a 7-day money-back guarantee for first-time subscribers. If you're not satisfied within your first 7 days of a paid subscription, contact support@nexarb.io for a full refund. After 7 days, subscription fees are non-refundable.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Can I change my plan?</div>
+        <div class="faq-a">Yes. You can upgrade or downgrade your plan at any time. Upgrades take effect immediately with prorated billing. Downgrades take effect at the start of your next billing cycle.</div>
+      </div>
+
+      <h2>Security & Privacy</h2>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Is my Amazon API key safe?</div>
+        <div class="faq-a">Yes. All marketplace credentials are encrypted using AES-256 at rest and TLS 1.3 in transit. Your API keys are never logged, never displayed in full after entry, and never shared with any third party. They are used exclusively to make authorized API calls on your behalf.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Do you sell my data?</div>
+        <div class="faq-a">No. We never sell, rent, or trade your personal data or marketplace data. See our Privacy Policy for full details on how we handle your information.</div>
+      </div>
+    </div>
+
+    <!-- PRICING INFO -->
+    <div id="pricing-info" class="page">
+      <span class="page-eye">Support</span>
+      <h1 class="page-title">Pricing & Billing</h1>
+      <p class="page-date">Questions? Email <a href="mailto:billing@nexarb.io">billing@nexarb.io</a></p>
+
+      <h2>Our Plans</h2>
+      <div class="plan-grid">
+        <div class="plan-card">
+          <div class="plan-name">Solo</div>
+          <div class="plan-price">$99<span>/month</span></div>
+          <ul class="plan-features">
+            <li>1 marketplace</li>
+            <li>50 deals/day</li>
+            <li>Telegram alerts</li>
+            <li>Basic AI scoring</li>
+          </ul>
+        </div>
+        <div class="plan-card featured">
+          <div class="plan-name">Professional ★</div>
+          <div class="plan-price">$199<span>/month</span></div>
+          <ul class="plan-features">
+            <li>Amazon + Walmart</li>
+            <li>500 deals/day</li>
+            <li>Full AI + Alibaba</li>
+            <li>P&L tracking</li>
+          </ul>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Agency</div>
+          <div class="plan-price">$399<span>/month</span></div>
+          <ul class="plan-features">
+            <li>Unlimited deals</li>
+            <li>10 accounts</li>
+            <li>API access</li>
+            <li>White-label</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>Common Billing Questions</h2>
+      <h3>When am I charged?</h3>
+      <p>Your 14-day free trial starts when you sign up. If you add a payment method, you'll be charged on day 15 and monthly thereafter on the same date.</p>
+      <h3>What payment methods do you accept?</h3>
+      <p>We accept all major credit and debit cards (Visa, Mastercard, American Express, Discover) through Stripe. We do not accept PayPal or cryptocurrency at this time.</p>
+      <h3>Will I receive invoices?</h3>
+      <p>Yes. A detailed invoice is emailed after every successful charge and is also available in your Billing dashboard.</p>
+      <h3>What if my payment fails?</h3>
+      <p>If a payment fails, we'll retry 3 times over 7 days and notify you by email. If payment is not received, your account will be paused (not deleted) until the issue is resolved.</p>
+    </div>
+
+    <!-- CONTACT -->
+    <div id="contact" class="page">
+      <span class="page-eye">Support</span>
+      <h1 class="page-title">Contact Us</h1>
+      <p class="page-date">We typically respond within 24 hours on business days.</p>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h4>General Support</h4>
+          <p>Questions about using NexArb, getting started, or troubleshooting.<br><a href="mailto:support@nexarb.io">support@nexarb.io</a></p>
+        </div>
+        <div class="contact-card">
+          <h4>Billing</h4>
+          <p>Subscription questions, invoices, refunds, or payment issues.<br><a href="mailto:billing@nexarb.io">billing@nexarb.io</a></p>
+        </div>
+        <div class="contact-card">
+          <h4>Privacy</h4>
+          <p>Data requests, privacy concerns, or CCPA/GDPR inquiries.<br><a href="mailto:privacy@nexarb.io">privacy@nexarb.io</a></p>
+        </div>
+        <div class="contact-card">
+          <h4>Security</h4>
+          <p>Report a vulnerability or security concern responsibly.<br><a href="mailto:security@nexarb.io">security@nexarb.io</a></p>
+        </div>
+        <div class="contact-card">
+          <h4>Partnerships</h4>
+          <p>API partnerships, integrations, or business development.<br><a href="mailto:partners@nexarb.io">partners@nexarb.io</a></p>
+        </div>
+        <div class="contact-card">
+          <h4>Legal</h4>
+          <p>Legal notices, terms inquiries, or compliance questions.<br><a href="mailto:legal@nexarb.io">legal@nexarb.io</a></p>
+        </div>
+      </div>
+
+      <h2>Company Details</h2>
+      <p><strong>Five S LLC</strong><br>5777 Foligno Way<br>San Jose, CA 95138<br>United States</p>
+      <p>California Seller's Permit: 0-056-852-800<br>Amazon Seller ID: A1IIQV16D2QG1Z</p>
+    </div>
+
+    <!-- ABOUT -->
+    <div id="about" class="page">
+      <span class="page-eye">Company</span>
+      <h1 class="page-title">About NexArb</h1>
+      <p class="page-date">Built by sellers, for sellers.</p>
+
+      <p>NexArb was founded in 2026 by Shakeel Hussain Khan, a San Jose-based entrepreneur who spent months manually hunting for arbitrage deals across Amazon and Walmart. Frustrated by the time required and the lack of tools that worked across multiple channels simultaneously, he built ArbitrAI — a fully automated deal-sourcing engine.</p>
+
+      <p>NexArb is the commercial platform built on top of that engine — bringing the same automation, AI scoring, and multi-channel routing to serious sellers everywhere.</p>
+
+      <h2>Our Mission</h2>
+      <p>To democratize arbitrage by giving every seller access to enterprise-grade AI and automation — so you can focus on growing your business, not hunting for deals.</p>
+
+      <h2>What Makes Us Different</h2>
+      <ul>
+        <li><strong>Triple-channel routing</strong> — the only platform that routes across Amazon, Walmart, and Alibaba automatically</li>
+        <li><strong>Verified margins</strong> — real prices, not estimates, with a 50% Walmart floor filter</li>
+        <li><strong>Claude AI</strong> — powered by Anthropic's Claude Haiku for intelligent deal scoring</li>
+        <li><strong>Zero manual work</strong> — fully automated from scan to alert, 3x daily</li>
+      </ul>
+
+      <h2>Our Stack</h2>
+      <p>NexArb is built on Next.js, Supabase, Clerk, Stripe, and Anthropic's Claude API. Our deal engine runs on DigitalOcean with PM2 process management and real-time WebSocket updates.</p>
+    </div>
+
+    <!-- REFUND -->
+    <div id="refund" class="page">
+      <span class="page-eye">Company</span>
+      <h1 class="page-title">Refund Policy</h1>
+      <p class="page-date">Last updated: August 6, 2026</p>
+
+      <div class="highlight-box">
+        <p><strong>7-day money-back guarantee</strong> for all first-time paid subscribers. No questions asked.</p>
+      </div>
+
+      <h2>Eligibility</h2>
+      <p>You are eligible for a full refund if:</p>
+      <ul>
+        <li>This is your first paid subscription to NexArb</li>
+        <li>You request the refund within 7 days of your first charge</li>
+        <li>Your account has not violated our Terms of Service or Acceptable Use Policy</li>
+      </ul>
+
+      <h2>How to Request a Refund</h2>
+      <p>Email <a href="mailto:billing@nexarb.io">billing@nexarb.io</a> with the subject line "Refund Request" and your account email address. We will process eligible refunds within 5-10 business days to your original payment method.</p>
+
+      <h2>Non-Refundable Situations</h2>
+      <ul>
+        <li>Refund requests made more than 7 days after the first charge</li>
+        <li>Renewal charges on existing subscriptions</li>
+        <li>Accounts terminated for Terms of Service violations</li>
+        <li>Partial month refunds for mid-cycle cancellations</li>
+      </ul>
+
+      <h2>Questions</h2>
+      <p>Contact <a href="mailto:billing@nexarb.io">billing@nexarb.io</a> for any billing or refund questions.</p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-section a').forEach(a => a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function toggleFaq(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
+</script>
+</body>
+</html>
