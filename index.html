@@ -633,6 +633,48 @@
     .steps { grid-template-columns: 1fr; }
     .hero-title { letter-spacing: -1.5px; }
   }
+
+  /* ── HERO FADE-IN ANIMATION ──────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-badge { animation: fadeUp 0.6s ease both; animation-delay: 0.1s; }
+  .hero-title { animation: fadeUp 0.7s ease both; animation-delay: 0.2s; }
+  .hero-sub   { animation: fadeUp 0.7s ease both; animation-delay: 0.3s; }
+  .hero-tagline { animation: fadeUp 0.7s ease both; animation-delay: 0.35s; }
+  .hero-actions { animation: fadeUp 0.7s ease both; animation-delay: 0.45s; }
+  .hero-stats { animation: fadeUp 0.8s ease both; animation-delay: 0.55s; }
+
+  /* Count-up for stat numbers */
+  .stat-num { display: inline-block; }
+
+  /* ── COOKIE CONSENT ──────────────────────────── */
+  #cookie-banner {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 9999; width: min(520px, calc(100vw - 32px));
+    background: var(--navy); color: var(--cream);
+    border-radius: 16px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    animation: fadeUp 0.4s ease;
+  }
+  #cookie-banner p { font-size: 13px; line-height: 1.5; flex: 1; color: rgba(240,230,211,0.85); }
+  #cookie-banner a { color: var(--gold2); text-decoration: underline; }
+  #cookie-accept {
+    background: var(--gold); color: var(--navy);
+    border: none; border-radius: 100px;
+    padding: 8px 18px; font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  #cookie-accept:hover { background: var(--gold2); }
+  #cookie-decline {
+    background: none; border: none; color: rgba(240,230,211,0.5);
+    font-size: 13px; cursor: pointer; padding: 8px; flex-shrink: 0;
+    transition: color 0.2s;
+  }
+  #cookie-decline:hover { color: rgba(240,230,211,0.8); }
 </style>
 
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%230D1B2A' stroke='%23B8922A' stroke-width='0.8'/%3E%3Cline x1='10' y1='10' x2='10' y2='22' stroke='%23F0E6D3' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='22' y1='10' x2='22' y2='22' stroke='%23F0E6D3' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='10' y1='10' x2='22' y2='22' stroke='%23B8922A' stroke-width='1.1' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='10' r='1.6' fill='%23B8922A'/%3E%3Ccircle cx='22' cy='22' r='1.6' fill='%23B8922A'/%3E%3C/svg%3E"/>
@@ -926,6 +968,7 @@
     The waitlist<br><span style="color:var(--gold2);font-style:italic;">is open.</span>
   </h2>
   <p class="waitlist-sub">Join sellers already automating their arbitrage with NexArb. Early access members get 3 months free.</p>
+  <p id="waitlist-count" style="font-size:13px;color:var(--gold2);margin-bottom:20px;font-weight:500;min-height:20px;"></p>
   <div class="waitlist-form">
     <input type="email" placeholder="your@email.com"/>
     <button type="button" id="waitlist-btn">Join waitlist →</button>
@@ -982,8 +1025,44 @@
 
 
 
+<!-- ── COOKIE CONSENT ──────────────────────────── -->
+<div id="cookie-banner" style="display:none;">
+  <p>We use cookies to improve your experience. <a href="/legal.html">Learn more</a></p>
+  <button id="cookie-accept">Accept</button>
+  <button id="cookie-decline">Decline</button>
+</div>
+
 <script>
 (function() {
+  // ── Cookie consent ──────────────────────────
+  var banner = document.getElementById("cookie-banner");
+  var cookiePref = localStorage.getItem("nexarb_cookie_pref");
+  if (!cookiePref && banner) {
+    banner.style.display = "flex";
+    document.getElementById("cookie-accept").addEventListener("click", function() {
+      localStorage.setItem("nexarb_cookie_pref", "accepted");
+      banner.style.display = "none";
+    });
+    document.getElementById("cookie-decline").addEventListener("click", function() {
+      localStorage.setItem("nexarb_cookie_pref", "declined");
+      banner.style.display = "none";
+    });
+  }
+
+  // ── Waitlist counter ────────────────────────
+  var countEl = document.getElementById("waitlist-count");
+  if (countEl) {
+    fetch("/api/waitlist?count=1")
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.count && d.count > 0) {
+          countEl.textContent = d.count + " sellers already on the waitlist";
+        }
+      })
+      .catch(function() { /* ignore */ });
+  }
+
+  // ── Waitlist form ───────────────────────────
   var btn = document.getElementById("waitlist-btn");
   var form = document.querySelector(".waitlist-form");
   var input = form ? form.querySelector("input") : null;
@@ -1019,6 +1098,7 @@
         btn.style.background = "#10B981";
         btn.style.color = "#fff";
         if (note) note.textContent = data.message;
+        if (countEl && data.count) countEl.textContent = data.count + " sellers on the waitlist";
       } else {
         throw new Error(data.error || "Something went wrong.");
       }
@@ -1036,6 +1116,47 @@
       if (e.key === "Enter") submitWaitlist();
     });
   }
+
+  // ── Count-up animation for hero stats ──────
+  function countUp(el, target, suffix) {
+    var start = 0;
+    var duration = 1200;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min((ts - startTime) / duration, 1);
+      var ease = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(start + ease * (target - start)) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Trigger count-up when hero stats enter viewport
+  var stats = document.querySelectorAll(".stat-num");
+  var targets = [171, 3, 0, 3];
+  var suffixes = ["+", "×", "", ""];
+  var triggered = false;
+  var origTexts = [];
+  stats.forEach(function(el, i) {
+    origTexts[i] = el.textContent;
+  });
+
+  function onScroll() {
+    if (triggered) return;
+    var stripEl = document.querySelector(".hero-stats");
+    if (!stripEl) return;
+    var rect = stripEl.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.85) {
+      triggered = true;
+      stats.forEach(function(el, i) {
+        if (targets[i] > 0) countUp(el, targets[i], suffixes[i]);
+      });
+      window.removeEventListener("scroll", onScroll);
+    }
+  }
+  window.addEventListener("scroll", onScroll);
+  onScroll(); // check immediately
 })();
 </script>
 
