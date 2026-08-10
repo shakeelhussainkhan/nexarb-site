@@ -644,3 +644,21 @@ function toggleFaq(el) {
 </script>
 </body>
 </html>
+<script>
+// Handle hash on page load
+window.addEventListener('load', function() {
+  const hash = window.location.hash.replace('#', '');
+  if (hash) {
+    const page = document.getElementById(hash);
+    const link = document.querySelector(`[onclick="showPage('${hash}')"]`);
+    if (page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      page.classList.add('active');
+    }
+    if (link) {
+      document.querySelectorAll('.sidebar-section a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+    }
+  }
+});
+</script>
