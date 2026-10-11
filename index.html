@@ -126,11 +126,16 @@
     border: 1px solid rgba(212,175,55,0.35);
     color: #E8C766;
   }
-  .hero-cinematic .hero-stats .stat {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
+  .hero-cinematic .hero-stats {
+    background: rgba(10,15,30,0.55);
+    border: 1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(12px);
   }
+  .hero-cinematic .hero-stats .stat {
+    background: transparent;
+    border-right: 0.5px solid rgba(255,255,255,0.12);
+  }
+  .hero-cinematic .hero-stats .stat:last-child { border-right: none; }
   .hero-cinematic .stat-num { color: #fff; }
   .hero-cinematic .stat-label { color: rgba(255,255,255,0.6); }
   .hero-cinematic .btn-outline {
